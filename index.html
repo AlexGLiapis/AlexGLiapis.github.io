@@ -4,10 +4,11 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Personal Website">
+    <meta name="author" content="Alexander G Liapis">
 
-    <title>Single Portfolio Item Template for Bootstrap 3</title>
+    <title>Alex Liapis's Website</title>
+    <link rel="icon" href="website_icon.png">
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.css" rel="stylesheet">
@@ -27,15 +28,14 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="http://startbootstrap.com">Start Bootstrap</a>
+          <a class="navbar-brand" href="#home">Home</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse navbar-ex1-collapse">
           <ul class="nav navbar-nav">
+            <!-- TODO: Add blogs <li><a href="#blog">Blog</a></li> -->
             <li><a href="#about">About</a></li>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#contact">Contact</a></li>
           </ul>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container -->
@@ -46,27 +46,34 @@
       <div class="row">
 
         <div class="col-lg-12">
-          <h1 class="page-header">Portfolio Item <small>Explain Your Work</small></h1>
+          <h1 class="page-header">Main Projects</h1>
         </div>
 
       </div>
 
       <div class="row">
 
-        <div class="col-md-8">
-          <img class="img-responsive" src="http://placehold.it/750x500">
+        <div class="col-md-5">
+          <img class="img-responsive" src="assets/sound_waveform.jfif" href="#projects/sound">
         </div>
 
         <div class="col-md-4">
-          <h3>Project Description</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae. Sed dui lorem, adipiscing in adipiscing et, interdum nec metus. Mauris ultricies, justo eu convallis placerat, felis enim.</p>
-          <h3>Project Details</h3>
-          <ul>
-            <li>Lorem Ipsum</li>
-            <li>Dolor Sit Amet</li>
-            <li>Consectetur</li>
-            <li>Adipiscing Elit</li>
-          </ul>
+          <h3>Song Recogniiton</h3>
+          <p>Identifies a song from an audio clip by matching frequency profiles to known songs.</p>
+        </div>
+      </div>
+
+      <br>
+
+      <div class="row">
+
+        <div class="col-md-5">
+          <img class="img-responsive" src="assets/bot_arena.png" href="#projects/bots">
+        </div>
+
+        <div class="col-md-4">
+          <h3>(Coming Soon!) Naive Bot Behavior in Min-Max Problems</h3>
+          <p>Explores the impact of naive bot logic, initial conditions, and non-linear constraints in competitive min-max systems.</p>
         </div>
 
       </div>
@@ -74,23 +81,31 @@
       <div class="row">
 
         <div class="col-lg-12">
-          <h3 class="page-header">Related Projects</h3>
+          <h3 class="page-header">Minor Projects</h3>
+        </div>
+
+        <div class="col-sm-3 col-xs-6">
+        	<a href="#"><img class="img-responsive portfolio-item" src="assets/rand.jfif"></a>
+          <h4>Random Bit Generation</h4>
+          <p>Coming Soon!</p>
         </div>
 
         <div class="col-sm-3 col-xs-6">
         	<a href="#"><img class="img-responsive portfolio-item" src="http://placehold.it/500x300"></a>
+          <h4></h4>
+          <p></p>
         </div>
 
         <div class="col-sm-3 col-xs-6">
         	<a href="#"><img class="img-responsive portfolio-item" src="http://placehold.it/500x300"></a>
+          <h4></h4>
+          <p></p>
         </div>
 
         <div class="col-sm-3 col-xs-6">
         	<a href="#"><img class="img-responsive portfolio-item" src="http://placehold.it/500x300"></a>
-        </div>
-
-        <div class="col-sm-3 col-xs-6">
-        	<a href="#"><img class="img-responsive portfolio-item" src="http://placehold.it/500x300"></a>
+          <h4></h4>
+          <p></p>
         </div>
 
       </div>
@@ -102,11 +117,6 @@
       <hr>
 
       <footer>
-        <div class="row">
-          <div class="col-lg-12">
-            <p>Copyright &copy; Company 2013</p>
-          </div>
-        </div>
       </footer>
 
     </div><!-- /.container -->
