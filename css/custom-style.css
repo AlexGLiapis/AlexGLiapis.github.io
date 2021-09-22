@@ -1,0 +1,15 @@
+.soft-link {
+  color: #696969;
+  text-decoration: none;
+}
+
+.soft-link:hover,
+.soft-link:focus {
+  color: #008B8B;
+}
+
+.soft-link:focus {
+  outline: thin dotted #333;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
