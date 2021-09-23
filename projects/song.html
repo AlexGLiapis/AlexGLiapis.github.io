@@ -45,78 +45,124 @@
     </nav>
 
     <div class="container">
-
       <div class="row">
-
-        <div class="col-lg-12">
-          <h1 class="page-header">Main Projects</h1>
+        <div class="col-lg-10">
+          <h1 class="page-header">Song Recognition<br><small><small>By: Alex Liapis</small></small></h1>
         </div>
-
       </div>
 
       <div class="row">
+        <div class="col-lg-10">
+          <h3><b>Introduction</b></h3>
+          <p style="font-size:18px;">In this project, I am going to make a simple version of Shazam, and other music recognition software, and walk through the thought process along the way.
+            If you're looking for a detailed write-up on how music recognition works, I suggest this <a href="http://coding-geek.com/how-shazam-works/">blog post</a>.
+            This will be solely based on frequency analysis, unfortunately no machine learning like <a href="https://blog.google/products/search/hum-to-search/">Google Hum</a> due to copyright issues.
+            Note, I am not recreating Shazam exactly, but using many of the same tools and approaches.
+          </p>
 
-        <div class="col-md-5">
-          <a href="projects/song.html">
-            <img class="img-responsive" src="../assets/sound_waveform.jfif">
-          </a>
-        </div>
+          <h3><b>Frequency Analysis</b></h3>
+          <p style="font-size:18px;">
+            Since people can only hear frequencies between 20Hz - 20,000Hz, music mainly contains frequencies inside this range.
+            Each frequency correlates to different sounds/instruments and producing music requires editing or cutting certain frequencies.
+            While you can go into detail on each section of the frequency range (<a href="https://musicproductiontips.net/wp-content/uploads/pdf/musicproductiontips.net-Frequency_Chart__The_Most_Important_Audio_Frequency_Ranges-letter.pdf">here</a> & <a href="https://blog.landr.com/sound-frequency-eq/">here</a>),
+            below is a summary.
+          </p>
+          <li style="font-size:18px;">0Hz - 60Hz &emsp;&emsp;&nbsp; Sub-Bass:&nbsp;&nbsp; Low, punchy energy that you feel, not hear.</li>
+          <li style="font-size:18px;">60Hz - 250Hz &emsp;&ensp;Bass: &nbsp;&emsp;&nbsp; &ensp; Most of the weight and thickness of a song.</li>
+          <li style="font-size:18px;">250Hz - 500Hz &emsp;Low Mids:&nbsp;&nbsp; Most of the muddiness or thinness of a song, often crowded.</li>
+          <li style="font-size:18px;">500Hz - 2KHz &emsp;&ensp;Midrange:&nbsp;&nbsp; Most instrument sounds reside here.</li>
+          <li style="font-size:18px;">2KHz - 4KHz &emsp;&emsp;High Mids:&nbsp; Vocals, guitars, higher-pitched sounds.</li>
+          <li style="font-size:18px;">4KHz - 6KHz &emsp;&emsp;Presence:&nbsp;&nbsp; Song clarity and closeness are from here.</li>
+          <li style="font-size:18px;">6KHz - 20KHz &emsp;&nbsp; Air: &nbsp;&emsp; &emsp; &nbsp; Sibilance and openness of the song.</li>
+          <br>
+          <p style="font-size:18px;">
+            These are general guidelines, which vary according to who you ask and it can get much more complicated.
+            Each second of music you hear, you will listen to a combination of frequencies across these different regions, even if it comes from the same instrument.
+            In order to analyze an audio sample of a song, we need to break it up into its component frequencies, then match those frequencies to our known song.
+          </p>
+          <p style="font-size:18px;">
+            We can extract the frequencies via a Fourier Transform, which can transform a given function into to a collection of sin waves.
+            Each of these waves will have a phase shift, frequency, and amplitude, which we will use in our analysis.
+            In practice, a Fast Fourier Transform (FFT) is used to decompose a signal into its component frequencies, which is explained in detail in this <a href="https://towardsdatascience.com/fast-fourier-transform-937926e591cb">blog post</a>.
+          </p>
 
-        <div class="col-md-4">
-          <a class="soft-link" href="../projects/song.html">
-            <h3>Song Recogniiton</h3>
-          </a>
-          <p>Identifies a song from an audio clip by matching frequency profiles to known songs.</p>
+          <h3><b>Fingerprinting and Matching Songs</b></h3>
+          <p style="font-size:18px;">
+            Even if we use the above method to generate some unqiue frequency fingerprint for a song, how do we efficiently search for a match?
+            Each sample can be a small time frame in any of the many songs stored on the database.
+            Hashing is the solution.
+            By splitting each song and audio sample into small pieces, we can hash the fingerprint of these small bits and store them.
+            When two pieces have the same hash, they should be the same (in theory).
+          </p>
+
+          <p style="font-size:18px;">
+            Of course, real hash functions will have false collisions and background noise in the audio sample can perturb the hash.
+            However, with enough intervals from the sample, we can match multiple points, thus making it more robust to both of these issues.
+            If we also ensure these matching hashes are a sequential time frame in the original song, then we will have a much higher confidence the match is correct.
+          </p>
+
+          <p style="font-size:18px;">
+            How do we combine this into a working algorithm?
+            Let's break it down. </p>
+          <li style="font-size:18px;">Record an audio sample.</li>
+          <li style="font-size:18px;">Break up the sample into small time intervals.</li>
+          <li style="font-size:18px;">Use FFT to convert sample its component frequencies.</li>
+          <li style="font-size:18px;">Store the loudest (highest amplitude) frequency in each each sub-domain.</li>
+          <li style="font-size:18px;">Take the hash of the dominant frequencies.</li>
+          <li style="font-size:18px;">Find hash collisions with known time intervals from songs in database.</li>
+          <li style="font-size:18px;">Repeat for each time interval.</li>
+          <li style="font-size:18px;">Return song with the most interval matches in sequence (constituting part of the song).</li>
+          <br>
+          <p style="font-size:18px;">
+            Of course, there are many specifics that need to be defined: how many frequencies to store, what hash function, etc.
+            But, the overall workflow is efficient for minimizing both song matching speed and song database size.
+          </p>
+
+          <h3><b>Possible Extensions</b></h3>
+          <p style="font-size:18px;">
+            Of course, for a large-scale service like Shazam, you need to value search speed, storage space, and result accuracy, which often comes at the cost of the former two.
+            It would make sense to make several concessions to try to strike a good balance.
+            For example, eliminating frequencies in extremely low and high ranges would be okay, since they are often not integral to the song's identity and are often cluttered with noise.
+            Similarly, there is likely some balance of song sampling rate, frequency bins, and hash size to avoid extra data usage.
+          </p>
+          <p style="font-size:18px;">
+            What if we need accuracy above all?
+            Then, the algorithm would need to be modified such that near-misses would have to be considered, since enough noise could change the hash.
+            Naively searching near hashes could easily balloon searching cost, but Locality Sensitive Hashing (LSH) could solve this issue with lower additional storage cost, <a href="https://en.wikipedia.org/wiki/Locality-sensitive_hashing">more info</a>.
+            The number of frequency buckets and significant frequencies stored could also increase, but that would require recomputing the fingerprint for all songs.
+          </p>
+
+          <p style="font-size:18px;">
+            Lastly, we can consider humming recognition.
+            A simple frequency fingerprint is not sufficient, since there is a huge difference in hum and song frequencies, and between the hums of different people.
+            This is where machine learning, namely neural networks, step into the picture.
+            If you could generate a song fingerprint that is based on its general beat and rhythm, instead of frequencies or vocal quality, then it could be transferrable between songs and hums.
+            However, it is hard to speculate how such systems work, without building one from scratch.
+          </p>
+
+          <h3><b>References</b></h3>
+          <p style="font-size:18px;">
+            <li style="font-size:18px;">In addition to the above links, these two blogposts (<a href="http://coding-geek.com/how-shazam-works/">here</a> & <a href="https://www.royvanrijn.com/blog/2010/06/creating-shazam-in-java/">here</a>), are excellent at explaining how Shazam works.</li>
+            <li style="font-size:18px;">Photo Credit: <a href="https://www.shutterstock.com/video/clip-10570241-waveform-sound-audio-video-animation">https://www.shutterstock.com/video/clip-10570241-waveform-sound-audio-video-animation</a></li>
+          </p>
         </div>
       </div>
+
 
       <br>
-
-      <div class="row">
-
-        <div class="col-md-5">
-          <a href="projects/bots">
-            <img class="img-responsive" src="../assets/bot_arena.png">
-          </a>
-        </div>
-
-        <div class="col-md-4">
-          <a class="soft-link" href="../projects/bots">
-            <h3>(Coming Soon!) Naive Bot Behavior in Min-Max Problems</h3>
-          </a>
-          <p>Explores the impact of naive bot logic, initial conditions, and non-linear constraints in competitive min-max systems.</p>
-        </div>
-
-      </div>
-
-      <br>
-      <div class="row">
-
-        <div class="col-lg-12">
-          <h3 class="page-header">Minor Projects</h3>
-        </div>
-
-        <div class="col-sm-3 col-xs-6">
-        	<a href="#"><img class="img-responsive portfolio-item" src="../assets/rand.jfif"></a>
-          <h4>Random Bit Generation</h4>
-          <p>Coming Soon!</p>
-        </div>
-      </div>
 
     </div><!-- /.container -->
 
     <div class="container">
-
-      <hr>
-
       <footer>
         <div class="row">
-          <div class="col-lg-12">
+          <div class="col-lg-10">
+            <hr>
             <p>Copyright &copy Alexander G Liapis, 2021</p>
           </div>
         </div>
         <div class="row">
-          <div class="col-lg-12">
+          <div class="col-lg-10">
             <p>Email: alex dot liapis at rice dot edu</p>
             <a class="soft-link" href="https://www.linkedin.com/in/alexander-liapis/" itemprop="sameAs">
               <i class="fa fa-fw fa-linkedin-square" aria-hidden="true"></i> LinkedIn
